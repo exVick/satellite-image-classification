@@ -2,3 +2,6 @@ assets/
 
 data/
 public_test_data/
+
+*.csv
+*.py
