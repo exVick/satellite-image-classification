@@ -4,4 +4,4 @@ data/
 public_test_data/
 
 *.csv
-*.py
+eval.py
