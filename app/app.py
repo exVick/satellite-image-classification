@@ -14,7 +14,7 @@ from shiny.express import input, render, ui
 
 
 device = torch.device("cpu")
-model_path = Path(__file__).resolve().parent.parent / "assets" / "weights" / "best_model_params.pth"
+model_path = Path(__file__).parent / "prediction_model" / "best_model_params.pth"
 
 # mean and std per channel on training set
 mean, std = ((0.34372076990464207, 0.3811175644818459, 0.40848065640318615), (0.20149977112034764, 0.13648379098261232, 0.11620906916470537))
@@ -121,6 +121,14 @@ def run_prediction():
         predictions.set(predict(img))
 
 
+@reactive.effect
+@reactive.event(input.removeButton)
+def remove_image():
+    # clear uploaded image and prediction for a rerun
+    uploaded_image.set(None)
+    predictions.set(None)
+
+
 
 ui.page_opts(title="Satellite Image Classifier")
 
@@ -132,6 +140,13 @@ with ui.sidebar(title="Upload image"):
         multiple=False,
     )
     ui.input_action_button(id="predictButton", label="Predict class")
+
+    # only if image was uploaded
+    @render.ui
+    def remove_button():
+        if uploaded_image.get() is None:
+            return None
+        return ui.input_action_button(id="removeButton", label="Remove image")
 
 
 with ui.layout_columns():
